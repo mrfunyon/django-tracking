@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from django.conf import settings
+from conf import settings
 from tracking import views
 
 urlpatterns = patterns('',
@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     url(r'^refresh/json/$', views.get_active_users, name='tracking-get-active-users'),
 )
 
-if getattr(settings, 'TRACKING_USE_GEOIP', False):
+if settings.USE_GEOIP:
     urlpatterns += patterns('',
         url(r'^map/$', views.display_map, name='tracking-visitor-map'),
     )

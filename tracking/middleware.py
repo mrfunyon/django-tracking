@@ -6,7 +6,7 @@ import time
 import traceback
 import urllib, urllib2
 
-from django.conf import settings
+from conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.db.utils import DatabaseError
@@ -59,10 +59,8 @@ class VisitorTrackingMiddleware:
             # otherwise just fake a session key
             session_key = '%s:%s' % (ip_address, user_agent)
 
-        prefixes = getattr(settings, 'NO_TRACKING_PREFIXES', [])
-
         # ensure that the request.path does not begin with any of the prefixes
-        for prefix in prefixes:
+        for prefix in settings.NO_TRACKING_PREFIXES:
             if request.path.startswith(prefix):
                 log.debug('Not tracking request to: %s' % request.path)
                 return

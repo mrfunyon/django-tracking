@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 import traceback
 
-from django.conf import settings
+from conf import settings
 from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext, Context, loader
@@ -12,8 +12,6 @@ from django.views.decorators.cache import never_cache
 from tracking.models import Visitor
 from tracking.utils import u_clean as uc
 
-DEFAULT_TRACKING_TEMPLATE = getattr(settings, 'DEFAULT_TRACKING_TEMPLATE',
-                                    'tracking/visitor_map.html')
 log = logging.getLogger('tracking.views')
 
 def update_active_users(request):
@@ -97,16 +95,14 @@ def friendly_time(last_update):
 
     return friendly_time or 0
 
-def display_map(request, template_name=DEFAULT_TRACKING_TEMPLATE,
+def display_map(request, template_name=settings.DEFAULT_TEMPLATE,
         extends_template='base.html'):
     """
     Displays a map of recently active users.  Requires a Google Maps API key
     and GeoIP in order to be most effective.
     """
 
-    GOOGLE_MAPS_KEY = getattr(settings, 'GOOGLE_MAPS_KEY', None)
-
     return render_to_response(template_name,
-                              {'GOOGLE_MAPS_KEY': GOOGLE_MAPS_KEY,
+                              {'GOOGLE_MAPS_KEY': settings.GOOGLE_MAPS_KEY,
                                'template': extends_template},
                               context_instance=RequestContext(request))
