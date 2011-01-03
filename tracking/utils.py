@@ -1,4 +1,4 @@
-from conf import settings
+from tracking.conf import settings
 import re
 import unicodedata
 
@@ -11,27 +11,29 @@ def get_ip(request):
     behind a proxy, they may have a comma-separated list of IP addresses, so
     we need to account for that.  In such a case, only the first IP in the
     list will be retrieved.  Also, some hosts that use a proxy will put the
-    REMOTE_ADDR into HTTP_X_FORWARDED_FOR.  This will handle pulling back the
+    REMOTE_ADDR into HTTP_X_REAL_IP (for exemple nginx transparent proxy for django site)
+    or into HTTP_X_FORWARDED_FOR.  This will handle pulling back the
     IP from the proper place.
+    RPC allow proxy to add prosy-ip to list of remotes addreses. We handle it trying to split
+    comma separated addresses and get fist good.
     """
 
     # if neither header contain a value, just use local loopback
-    ip_address = request.META.get('HTTP_X_FORWARDED_FOR',
-                                  request.META.get('REMOTE_ADDR', '127.0.0.1'))
+    ip_address = request.META.get( 'HTTP_X_REAL_IP' ,
+                                  request.META.get( 'HTTP_X_FORWARDED_FOR' ,
+                                  request.META.get( 'REMOTE_ADDR', '127.0.0.1' ) ) )
+
     if ip_address:
         # make sure we have one and only one IP
-        try:
-            ip_address = IP_RE.match(ip_address)
-            if ip_address:
-                ip_address = ip_address.group(0)
-            else:
-                # no IP, probably from some dirty proxy or other device
-                # throw in some bogus IP
-                ip_address = '10.0.0.1'
-        except IndexError:
+        for addr in re.split(',\s+', ip_address ):
+          m = IP_RE.match( addr )
+          try:
+            if m:
+              return m.group( 0 );
+          except IndexError:
             pass
 
-    return ip_address
+    return '10.0.0.1'
 
 def get_timeout():
     """

@@ -1,5 +1,6 @@
 from django import template
 from tracking.models import Visitor
+import re
 
 register = template.Library()
 
@@ -48,3 +49,49 @@ def visitors_on_page(parser, token):
     return VisitorsOnSite(varname, same_page=True)
 register.tag(visitors_on_page)
 
+
+@register.tag(name='visitors')
+def visitors_tag(parser, token):
+  try:
+    tag_name, arg = token.contents.split(None, 1)
+  except ValueError:
+    raise template.TemplateSyntaxError, "%r tag requires arguments" % token.contents.split()[0]
+
+  match = re.search(r'as\s+(\w+)(\s+type=)(.+)?', arg)
+  if not match:
+    raise template.TemplateSyntaxError, "%r tag had invalid arguments" % tag_name
+  name = match.group(1)
+
+  type = "site";
+
+  if match.group(2) and match.group(3):
+    type = match.group(3)
+  else:
+    type = "site"
+  return VisitorsNode( name, type )
+
+
+class VisitorsNode(template.Node):
+  def __init__(self, name, type):
+    self.var_name = name
+    self.type = type
+
+  def render(self, context):
+    info = { 'total': 0
+           , 'registered': 0
+           , 'guests': 0
+           }
+    active = Visitor.objects.active()
+    if self.type == "page":
+      request = context['request']
+      try:
+        active = active.filter( url = request.path )
+      except KeyError:
+        raise template.TemplateSyntaxError("Please add 'django.core.context_processors.request' to your TEMPLATE_CONTEXT_PROCESSORS if you want to see how many users are on the same page.")
+    if active:
+      info['total'] = active.count()
+      info['registered'] = active.filter( user__isnull = False ).count()
+      info['guests'] = info['total'] - info['registered']
+
+    context[self.var_name] = info
+    return ''

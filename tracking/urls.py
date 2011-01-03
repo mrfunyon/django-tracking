@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from conf import settings
+from tracking.conf import settings
 from tracking import views
 
 urlpatterns = patterns('',

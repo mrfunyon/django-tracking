@@ -1,18 +1,20 @@
 from datetime import datetime, timedelta
 import logging
-import random
 import re
-import time
 import traceback
-import urllib, urllib2
 
-from conf import settings
+from tracking.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.db.utils import DatabaseError
 from django.http import Http404
 from tracking import utils
 from tracking.models import Visitor, UntrackedUserAgent, BannedIP
+
+try:
+    from hashlib import md5
+except ImportError:
+    from md5 import md5
 
 title_re = re.compile('<title>(.*?)</title>')
 log = logging.getLogger('tracking.middleware')
@@ -35,7 +37,7 @@ class VisitorTrackingMiddleware:
 
         # create some useful variables
         ip_address = utils.get_ip(request)
-        user_agent = request.META.get('HTTP_USER_AGENT', '')[:255]
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
 
         # retrieve untracked user agents from cache
         ua_key = '_tracking_untracked_uas'
@@ -57,7 +59,7 @@ class VisitorTrackingMiddleware:
             session_key = request.session.session_key
         else:
             # otherwise just fake a session key
-            session_key = '%s:%s' % (ip_address, user_agent)
+            session_key = md5( '%s:%s' % ( ip_address, user_agent ) ).hexdigest()
 
         # ensure that the request.path does not begin with any of the prefixes
         for prefix in settings.NO_TRACKING_PREFIXES:
@@ -83,7 +85,7 @@ class VisitorTrackingMiddleware:
             cutoff = now - timedelta(minutes=5)
             visitors = Visitor.objects.filter(
                 ip_address=ip_address,
-                user_agent=user_agent,
+                user_agent=user_agent[:255],
                 last_update__gte=cutoff
             )
 
@@ -105,12 +107,11 @@ class VisitorTrackingMiddleware:
 
         # update the tracking information
         visitor.user = user
-        visitor.user_agent = user_agent
+        visitor.user_agent = user_agent[:255]
 
         # if the visitor record is new, or the visitor hasn't been here for
         # at least an hour, update their referrer URL
-        one_hour_ago = now - timedelta(hours=1)
-        if not visitor.last_update or visitor.last_update <= one_hour_ago:
+        if not visitor.last_update or visitor.last_update <= ( now - timedelta( hours = 1 ) ) :
             visitor.referrer = utils.u_clean(request.META.get('HTTP_REFERER', 'unknown')[:255])
 
             # reset the number of pages they've been to

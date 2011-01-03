@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from tracking.conf import settings
 import logging
 import traceback
 
@@ -7,7 +8,6 @@ from django.contrib.gis.utils import HAS_GEOIP
 if HAS_GEOIP:
     from django.contrib.gis.utils import GeoIP, GeoIPException
 
-from conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -42,6 +42,14 @@ class Visitor(models.Model):
 
     objects = VisitorManager()
 
+    @property
+    def online(self):
+      if self.last_update:
+        timeout = utils.get_timeout()
+        cutoff = datetime.now() - timedelta(minutes = timeout)
+        return cutoff < self.last_update
+      return False
+
     def _time_on_site(self):
         """
         Attempts to determine the amount of time a visitor has spent on the
@@ -67,7 +75,7 @@ class Visitor(models.Model):
 
         if not HAS_GEOIP or not settings.USE_GEOIP:
             # go no further when we don't need to
-            log.debug('Bailing out.  HAS_GEOIP: %s; USE_GEOIP: %s' % (HAS_GEOIP, USE_GEOIP))
+            log.debug('Bailing out.  HAS_GEOIP: %s; USE_GEOIP: %s' % (HAS_GEOIP, settings.USE_GEOIP))
             return None
 
         if not hasattr(self, '_geoip_data'):

@@ -2,15 +2,17 @@ from datetime import datetime
 import logging
 import traceback
 
-from conf import settings
-from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext, Context, loader
+from tracking.conf import settings
+from django.http import Http403, HttpResponse
+from django.template import Context, loader
 from django.utils.simplejson import JSONEncoder
 from django.utils.translation import ungettext
 from django.views.decorators.cache import never_cache
 from tracking.models import Visitor
 from tracking.utils import u_clean as uc
+
+from django.views.generic.simple import direct_to_template
+
 
 log = logging.getLogger('tracking.views')
 
@@ -31,13 +33,13 @@ def update_active_users(request):
 
         # render the list of active users
         t = loader.get_template('tracking/_active_users.html')
-        c = Context(info)
-        users = {'users': t.render(c)}
+        c = Context( info )
+        users = {'users': t.render(c) }
 
         return HttpResponse(content=JSONEncoder().encode(users))
 
-    # if the request was not made via AJAX, raise a 404
-    raise Http404
+    # if the request was not made via AJAX, raise a 403 (forbidden)
+    raise Http403
 
 @never_cache
 def get_active_users(request):
@@ -72,8 +74,8 @@ def get_active_users(request):
 
         return response
 
-    # if the request was not made via AJAX, raise a 404
-    raise Http404
+    # if the request was not made via AJAX, raise a 403 (forbidden)
+    raise Http403
 
 def friendly_time(last_update):
     minutes = last_update / 60
@@ -95,14 +97,11 @@ def friendly_time(last_update):
 
     return friendly_time or 0
 
-def display_map(request, template_name=settings.DEFAULT_TEMPLATE,
-        extends_template='base.html'):
+def display_map( request, template_name = settings.DEFAULT_TEMPLATE, extends_template = 'base.html' ):
     """
     Displays a map of recently active users.  Requires a Google Maps API key
     and GeoIP in order to be most effective.
     """
-
-    return render_to_response(template_name,
-                              {'GOOGLE_MAPS_KEY': settings.GOOGLE_MAPS_KEY,
-                               'template': extends_template},
-                              context_instance=RequestContext(request))
+    return direct_to_template( request, template_name, { 'GOOGLE_MAPS_KEY': settings.GOOGLE_MAPS_KEY
+                                                       , 'template': extends_template
+                                                       , } )
