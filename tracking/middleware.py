@@ -3,7 +3,7 @@ import logging
 import re
 import traceback
 
-from tracking.conf import settings
+from tracking.settings import NO_TRACKING_PREFIXES
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.db.utils import DatabaseError
@@ -34,7 +34,7 @@ class VisitorTrackingMiddleware:
     def process_request(self, request):
         # don't process AJAX requests
         if request.is_ajax(): return
-
+        
         # create some useful variables
         ip_address = utils.get_ip(request)
         user_agent = request.META.get('HTTP_USER_AGENT', '')
@@ -62,7 +62,7 @@ class VisitorTrackingMiddleware:
             session_key = md5( '%s:%s' % ( ip_address, user_agent ) ).hexdigest()
 
         # ensure that the request.path does not begin with any of the prefixes
-        for prefix in settings.NO_TRACKING_PREFIXES:
+        for prefix in NO_TRACKING_PREFIXES:
             if request.path.startswith(prefix):
                 log.debug('Not tracking request to: %s' % request.path)
                 return

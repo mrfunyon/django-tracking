@@ -2,6 +2,17 @@
 django-tracking changes
 =======================
 
+0.3.8
+-----
+
+- Settings refactoring.
+- Added online property to Visitor object.
+- Added addition template tag for visitors statistic.
+- Fixed getting an ip remote address from request.
+- Small refactor and code cleanup
+- Added Russian translation.
+
+
 0.3.5
 -----
 

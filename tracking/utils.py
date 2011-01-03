@@ -1,4 +1,4 @@
-from tracking.conf import settings
+from tracking import settings
 import re
 import unicodedata
 

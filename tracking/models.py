@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from tracking.conf import settings
+from tracking import settings
 import logging
 import traceback
 
@@ -81,7 +81,7 @@ class Visitor(models.Model):
         if not hasattr(self, '_geoip_data'):
             self._geoip_data = None
             try:
-                gip = GeoIP(cache=settings.GEOIP_CACHE_TYPE)
+                gip = GeoIP(cache = settings.GEOIP_CACHE_TYPE)
                 self._geoip_data = gip.city(self.ip_address)
             except GeoIPException:
                 # don't even bother...
