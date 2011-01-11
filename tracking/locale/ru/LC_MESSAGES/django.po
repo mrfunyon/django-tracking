@@ -10,20 +10,21 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-03 22:51+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Jannis Leidel <jannis@leidel.info>\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: models.py:68
 msgid "unknown"
-msgstr "unbekannt"
+msgstr ""
 
 #: models.py:113
 msgid "keyword"
-msgstr "Schlagwort"
+msgstr ""
 
 #: models.py:113
 msgid ""
@@ -31,73 +32,69 @@ msgid ""
 "found in \"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/"
 "bot.html)\" and that visitor will not be tracked."
 msgstr ""
-"Ein Teil oder der ganze Name eines User Agent. \"Googlebot\" zum Beispiel "
-"wird auch in \"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google."
-"com/bot.html)\" gefunden werden und verhindern, dass dieser \"User\" "
-"getrackt wird."
 
 #: models.py:120
 msgid "Untracked User-Agent"
-msgstr "Nicht-getrackter User-Agent"
+msgstr ""
 
 #: models.py:121
 msgid "Untracked User-Agents"
-msgstr "Nicht-getrackte User-Agents"
+msgstr ""
 
 #: models.py:124
 msgid "The IP address that should be banned"
-msgstr "Die IP-Adresse ist schon verboten"
+msgstr ""
 
 #: models.py:131
 msgid "Banned IP"
-msgstr "Verbotene IP"
+msgstr ""
 
 #: models.py:132
 msgid "Banned IPs"
-msgstr "Verbotene IPs"
+msgstr ""
 
 #: views.py:86
 #, python-format
 msgid "%(minutes)i minute"
 msgid_plural "%(minutes)i minutes"
-msgstr[0] "%(minutes)i Minute"
-msgstr[1] "%(minutes)i Minuten"
+msgstr[0] ""
+msgstr[1] ""
 
 #: views.py:92
 #, python-format
 msgid "%(seconds)i second"
 msgid_plural "%(seconds)i seconds"
-msgstr[0] "%(seconds)i Sekunde"
-msgstr[1] "%(seconds)i Sekunden"
+msgstr[0] ""
+msgstr[1] ""
 
 #: templates/tracking/_active_users.html:2
 #, python-format
 msgid "1 active user"
 msgid_plural "%(counter)s active users"
-msgstr[0] "1 aktiver Benutzer"
-msgstr[1] "%(counter)s aktive Benutzer"
+msgstr[0] ""
+msgstr[1] ""
 
 #: templates/tracking/_active_users.html:5
 #, python-format
 msgid "1 guest user"
 msgid_plural "%(counter)s guest users"
-msgstr[0] "1 Gastbenutzer"
-msgstr[1] "%(counter)s Gastbenutzer"
+msgstr[0] ""
+msgstr[1] ""
 
 #: templates/tracking/_active_users.html:15
 #, python-format
 msgid "1 registered user"
 msgid_plural "%(counter)s registered users"
-msgstr[0] "1 registrierter Benutzer"
-msgstr[1] "%(counter)s registrierte Benutzer"
+msgstr[0] ""
+msgstr[1] ""
 
 #: templates/tracking/visitor_map.html:4
 msgid "Active Visitors Map"
-msgstr "Aktive Benutzer Karte"
+msgstr ""
 
 #: templates/tracking/visitor_map.html:15
 msgid "Active Users"
-msgstr "Aktive Benutzer"
+msgstr ""
 
 #: templates/tracking/visitor_map.html:18
 msgid ""
@@ -105,7 +102,3 @@ msgid ""
 "itself every 5 seconds or so, adding and removing pins in the map as "
 "necessary.  Stick around for a few minutes to see it in action!"
 msgstr ""
-"Unten sehen Sie eine Karte und eine Liste der Benutzer, die gerade auf "
-"dieser Seite aktiv sind. Ungefähr alle 5 Sekunden werden die Daten "
-"aktualisert und rendern die Karte neu. Bleiben Sie ein paar Minuten, um es "
-"live in Aktion zu erleben!"
