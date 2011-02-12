@@ -17,7 +17,7 @@ else:
         log.debug('Updating untracked user agents cache')
         cache.set('_tracking_untracked_uas',
             UntrackedUserAgent.objects.all(),
-            3600)
+            36000)
 
     def refresh_banned_ips(sender, instance, created=False, **kwargs):
         """Updates the cache of banned IP addresses"""

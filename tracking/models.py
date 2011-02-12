@@ -16,6 +16,9 @@ from tracking import utils
 log = logging.getLogger('tracking.models')
 
 class VisitorManager(models.Manager):
+    def online(self):
+	pass
+	
     def active(self, timeout=None):
         """
         Retrieves only visitors who have been active within the timeout
@@ -32,7 +35,7 @@ class VisitorManager(models.Manager):
 class Visitor(models.Model):
     session_key = models.CharField(max_length=40)
     ip_address = models.CharField(max_length=20)
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(User, null=True, related_name = 'visitor' )
     user_agent = models.CharField(max_length=255)
     referrer = models.CharField(max_length=255)
     url = models.CharField(max_length=255)

@@ -2,6 +2,7 @@ from tracking import settings
 import re
 import unicodedata
 
+
 # this is not intended to be an all-knowing IP address regex
 IP_RE = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
 
@@ -70,3 +71,25 @@ def u_clean(s):
 
     return uni.encode('ascii', 'xmlcharrefreplace')
 
+def user_agent_is_untracked(user_agent):
+  import logging
+  log = logging.getLogger('tracking.middleware')
+  from tracking.models import UntrackedUserAgent
+  from django.core.cache import cache
+  
+  # retrieve untracked user agents from cache
+  ua_key = '_tracking_untracked_uas'
+  untracked = cache.get(ua_key)
+  if untracked is None:
+    log.info('Updating untracked user agent cache')
+    untracked = UntrackedUserAgent.objects.all()
+    cache.set(ua_key, untracked, 3600)
+
+  # see if the user agent is not supposed to be tracked
+  for ua in untracked:
+    # if the keyword is found in the user agent, stop tracking
+    if unicode(user_agent, errors='ignore').find(ua.keyword) != -1:
+      return true
+  return false;
+
+ 
