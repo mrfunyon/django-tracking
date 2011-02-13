@@ -89,7 +89,7 @@ def user_agent_is_untracked(user_agent):
   for ua in untracked:
     # if the keyword is found in the user agent, stop tracking
     if unicode(user_agent, errors='ignore').find(ua.keyword) != -1:
-      return true
-  return false;
+      return True
+  return False;
 
  

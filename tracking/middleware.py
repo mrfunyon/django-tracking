@@ -107,13 +107,10 @@ class VisitorTrackingMiddleware:
             visitor.page_views = 0
             visitor.session_start = now
 
-        visitor.url = request.path
+        visitor.url = request.path[:255]
         visitor.page_views += 1
         visitor.last_update = now
-        try:
-            visitor.save()
-        except DatabaseError:
-            log.error('There was a problem saving visitor information:\n%s\n\n%s' % (traceback.format_exc(), locals()))
+        visitor.save()
 
 class VisitorCleanUpMiddleware:
     """Clean up old visitor tracking records in the database"""
@@ -124,7 +121,10 @@ class VisitorCleanUpMiddleware:
         if str(timeout).isdigit():
             log.debug('Cleaning up visitors older than %s hours' % timeout)
             timeout = datetime.now() - timedelta(hours=int(timeout))
-            Visitor.objects.filter(last_update__lte=timeout).delete()
+            try:
+              Visitor.objects.filter(last_update__lte=timeout).delete()
+            except:
+              pass
 
 class BannedIPMiddleware:
     def process_request(self, request):
